@@ -10,6 +10,7 @@
  - ESP32C4FN Super Mini
  - 10K resistor
  - Push button
+ - External 5V power supply
  
  **Required Arduino Libraries**
  - esp32 by Espressif Systems (board) 3.2.0
