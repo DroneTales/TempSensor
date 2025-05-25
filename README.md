@@ -8,6 +8,8 @@
  - DHT11
  - OLED SSD1306 128x64 i2c
  - ESP32C4FN Super Mini
+ - 10K resistor
+ - Push button
  
  **Required Arduino Libraries**
  - esp32 by Espressif Systems (board) 3.2.0
