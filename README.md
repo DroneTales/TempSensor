@@ -38,6 +38,7 @@
   If you like the project you can support me by the following link:
 
   **BuyMeACoffee**: https://buymeacoffee.com/dronetales  
+  **Boosty**: https://boosty.to/drone_tales/donate  
   
   **BTC**: bitcoin:1A1WM3CJzdyEB1P9SzTbkzx38duJD6kau  
   **BCH**: bitcoincash:qre7s8cnkwx24xpzvvfmqzx6ex0ysmq5vuah42q6yz  
