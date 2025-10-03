@@ -138,10 +138,11 @@ struct TemperatureSensor : Service::TemperatureSensor {
     }
     
     void loop() {
-        if (isnan(Temperature))
+        if (isnan(Temperature)) {
             FTemperature->setVal(DHT_LOW_TEMPERATURE);
-        else
+        } else {
             FTemperature->setVal(Temperature);
+        }
     }
 };
 
@@ -155,10 +156,11 @@ struct HumiditySensor : Service::HumiditySensor {
     }
     
     void loop() {
-        if (isnan(Humidity))
+        if (isnan(Humidity)) {
             FHumidity->setVal(DHT_LOW_HUMIDITY);
-        else
+        } else {
             FHumidity->setVal(Humidity);
+        }
     }
 };
 
@@ -214,37 +216,41 @@ void DisplaySensorData(const bool FirstTime) {
         
         // Display temperature value.
         Oled.setCursor(45, 28);
-        if (isnan(Temperature))
+        if (isnan(Temperature)) {
             Oled.print("--");
-        else
+        } else {
             Oled.print((int8_t)Temperature);
+        }
         Oled.setCursor(100, 27);
         Oled.print("C");
         
         // Display humidity value.
         Oled.setCursor(45, 62);
-        if (isnan(Humidity))
+        if (isnan(Humidity)) {
             Oled.print("--");
-        else
+        } else {
             Oled.print((uint8_t)Humidity);
+        }
         Oled.print("%");
 
         // Display the data.
         Oled.display();
     }
 
-    if (FirstTime)
+    if (FirstTime) {
         // If data shown for the first time we must display the sigh.
         ShowSign = true;
-    else
+    } else {
         // Otherwise blink it.
         ShowSign = !ShowSign;
+    }
 
     // Draw the sign.
-    if (ShowSign)
+    if (ShowSign) {
         Oled.drawCircle(92, 8, 3, WHITE);
-    else
+    } else {
         Oled.drawCircle(92, 8, 3, BLACK);
+    }
     Oled.display();
 }
 
@@ -449,15 +455,17 @@ void DisplayHomeSpanStatus(const bool FirstTime) {
         HomeSpanStatus == HS_CONFIG_MODE_UNPAIR_SELECTED ||
         HomeSpanStatus == HS_CONFIG_MODE_ERASE_WIFI_SELECTED);
     // If status is static one then exit.
-    if (!Animated && !Blinkable)
+    if (!Animated && !Blinkable) {
         return;
+    }
 
     // Is is blinkable icon?
     if (Blinkable) {
         // We are here only in case the status is blinkable.
         CurrentImageIndex = CurrentImageIndex + 1;
-        if (CurrentImageIndex > 1)
+        if (CurrentImageIndex > 1) {
             CurrentImageIndex = 0;
+        }
         
         DisplayBlinkableIcons(CurrentImageIndex == 0);
         return;
@@ -465,8 +473,9 @@ void DisplayHomeSpanStatus(const bool FirstTime) {
 
     // We are here only if the icon is animated one.
     CurrentImageIndex = CurrentImageIndex + 1;
-    if (CurrentImageIndex > 3)
+    if (CurrentImageIndex > 3) {
         CurrentImageIndex = 0;
+    }
     
     if (HomeSpanStatus == HS_WIFI_CONNECTING) {
         DrawStatus(WIFI_CONNECTING_BMP_WIDTH, WIFI_CONNECTING_BMP_HEIGHT,
@@ -496,10 +505,11 @@ void UiTask(void *pvParameter) {
         // status update callback so status has just been changed and the
         // UI should be updated completely (for the first time).
         bool FirstTime = ((Events & UI_WAKEUP_EVENT) != 0);
-        if (HomeSpanStatus == HS_PAIRED)
+        if (HomeSpanStatus == HS_PAIRED) {
             DisplaySensorData(FirstTime);
-        else
+        } else {
             DisplayHomeSpanStatus(FirstTime);
+        }
     }
 
     vTaskDelete(NULL);
@@ -590,12 +600,14 @@ void ReadSensorTask(void* pvParameter) {
                     for (uint8_t i = 0; i < 40; i++) {
                         Pulse = Cur[i + 1].duration0 + Cur[i + 1].duration1;
                         Error = (Pulse <= 55 || Pulse >= 145);
-                        if (Error)
+                        if (Error) {
                             break;
+                        }
                         
                         Data[i / 8] <<= 1;
-                        if (Pulse > 110)
+                        if (Pulse > 110) {
                             Data[i / 8] |= 1;
+                        }
 			        }
 			        
                     if (!Error) {
