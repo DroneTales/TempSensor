@@ -112,12 +112,10 @@ EventGroupHandle_t UiTaskWakeupEvent = nullptr;
 /*                                  HomeSpan sensors                                  */
 
 // Device record.
-struct DeviceIdentify : Service::AccessoryInformation
-{
+struct DeviceIdentify : Service::AccessoryInformation {
     SpanCharacteristic* FIdentify;
     
-    DeviceIdentify(const char* Name, const char* Model) : Service::AccessoryInformation()
-    {
+    DeviceIdentify(const char* Name, const char* Model) : Service::AccessoryInformation() {
         char Sn[24];
         snprintf(Sn, 24, "DRONETALES-%llX", ESP.getEfuseMac());
         
@@ -131,42 +129,38 @@ struct DeviceIdentify : Service::AccessoryInformation
 };
 
 // Temperature sensor.
-struct TemperatureSensor : Service::TemperatureSensor
-{
+struct TemperatureSensor : Service::TemperatureSensor {
     SpanCharacteristic* FTemperature;
     
-    TemperatureSensor() : Service::TemperatureSensor()
-    {
+    TemperatureSensor() : Service::TemperatureSensor() {
         FTemperature = new Characteristic::CurrentTemperature(Temperature);
         FTemperature->setRange(DHT_LOW_TEMPERATURE, DHT_HIGH_TEMERATURE);
     }
     
-    void loop()
-    {
-        if (isnan(Temperature))
+    void loop() {
+        if (isnan(Temperature)) {
             FTemperature->setVal(DHT_LOW_TEMPERATURE);
-        else
+        } else {
             FTemperature->setVal(Temperature);
+        }
     }
 };
 
 // Humidity sensor.
-struct HumiditySensor : Service::HumiditySensor
-{
+struct HumiditySensor : Service::HumiditySensor {
     SpanCharacteristic* FHumidity;
     
-    HumiditySensor() : Service::HumiditySensor()
-    {
+    HumiditySensor() : Service::HumiditySensor() {
         FHumidity = new Characteristic::CurrentRelativeHumidity(Humidity);
         FHumidity->setRange(DHT_LOW_HUMIDITY, DHT_HIGH_HUMIDITY);
     }
     
-    void loop()
-    {
-        if (isnan(Humidity))
+    void loop() {
+        if (isnan(Humidity)) {
             FHumidity->setVal(DHT_LOW_HUMIDITY);
-        else
+        } else {
             FHumidity->setVal(Humidity);
+        }
     }
 };
 
@@ -176,8 +170,7 @@ struct HumiditySensor : Service::HumiditySensor
 /**************************************************************************************/
 /*                                  Helper functions                                  */
 
-bool IsEqual(const float a, const float b)
-{
+bool IsEqual(const float a, const float b) {
     return ((isnan(a) && isnan(b)) || (a == b));
 }
 
@@ -188,8 +181,7 @@ bool IsEqual(const float a, const float b)
 /*                                    UI functions                                    */
 
 // Draws the bitmap in the screen center.
-void DrawBitmap(const int16_t Width, const int16_t Height, const uint8_t Bitmap[])
-{
+void DrawBitmap(const int16_t Width, const int16_t Height, const uint8_t Bitmap[]) {
     Oled.drawBitmap((OLED_SCREEN_WIDTH - Width) / 2, (OLED_SCREEN_HEIGHT - Height) / 2,
         Bitmap, Width, Height, WHITE);
 }
@@ -197,8 +189,7 @@ void DrawBitmap(const int16_t Width, const int16_t Height, const uint8_t Bitmap[
 // Shows the current sensor data. Do it only if the HomeSpan status is HS_PAIRED.
 // FirstTime should be set to true only when the function called from HomeSpan status
 // changed callback.
-void DisplaySensorData(const bool FirstTime)
-{
+void DisplaySensorData(const bool FirstTime) {
     static float LastTemperature = NAN;
     static float LastHumidity = NAN;
     static bool ShowSign = true;
@@ -206,15 +197,13 @@ void DisplaySensorData(const bool FirstTime)
     // Update last data if it was changed.
     bool DataUpdated = (!IsEqual(Temperature, LastTemperature) ||
         !IsEqual(Humidity, LastHumidity));
-    if (DataUpdated)
-    {
+    if (DataUpdated) {
         LastTemperature = Temperature;
         LastHumidity = Humidity;
     }
     
     // Update full UI only if data changed or data shown for the first time.
-    if (FirstTime || DataUpdated)
-    {
+    if (FirstTime || DataUpdated) {
         // Clear display.
         Oled.clearDisplay();
 
@@ -227,60 +216,60 @@ void DisplaySensorData(const bool FirstTime)
         
         // Display temperature value.
         Oled.setCursor(45, 28);
-        if (isnan(Temperature))
+        if (isnan(Temperature)) {
             Oled.print("--");
-        else
+        } else {
             Oled.print((int8_t)Temperature);
+        }
         Oled.setCursor(100, 27);
         Oled.print("C");
         
         // Display humidity value.
         Oled.setCursor(45, 62);
-        if (isnan(Humidity))
+        if (isnan(Humidity)) {
             Oled.print("--");
-        else
+        } else {
             Oled.print((uint8_t)Humidity);
+        }
         Oled.print("%");
 
         // Display the data.
         Oled.display();
     }
 
-    if (FirstTime)
+    if (FirstTime) {
         // If data shown for the first time we must display the sigh.
         ShowSign = true;
-    else
+    } else {
         // Otherwise blink it.
         ShowSign = !ShowSign;
+    }
 
     // Draw the sign.
-    if (ShowSign)
+    if (ShowSign) {
         Oled.drawCircle(92, 8, 3, WHITE);
-    else
+    } else {
         Oled.drawCircle(92, 8, 3, BLACK);
+    }
     Oled.display();
 }
 
 // Draws the status icon.
-void DrawStatus(const int16_t Width, const int16_t Height, const uint8_t Bitmap[])
-{
+void DrawStatus(const int16_t Width, const int16_t Height, const uint8_t Bitmap[]) {
     Oled.clearDisplay();
     DrawBitmap(Width, Height, Bitmap);
     Oled.display();
 }
 
 // Simple clears the display.
-void ClearDisplay()
-{
+void ClearDisplay() {
     Oled.clearDisplay();
     Oled.display();
 }
 
 // Shows the initial status icon.
-void DisplayInitialIcon(const HS_STATUS Status)
-{
-    switch (Status)
-    {
+void DisplayInitialIcon(const HS_STATUS Status) {
+    switch (Status) {
         // WiFi Credentials have not yet been set/stored.
         case HS_WIFI_NEEDED:
             DrawStatus(WIFI_NEEDED_BMP_WIDTH, WIFI_NEEDED_BMP_HEIGHT, WIFI_NEEDED_BMP);
@@ -410,17 +399,14 @@ void DisplayInitialIcon(const HS_STATUS Status)
     }
 }
 
-void DisplayBlinkableIcons(const bool Hide)
-{
-    if (Hide)
-    {
+void DisplayBlinkableIcons(const bool Hide) {
+    if (Hide) {
         Oled.clearDisplay();
         Oled.display();
         return;
     }
     
-    switch (HomeSpanStatus)
-    {
+    switch (HomeSpanStatus) {
         case HS_CONFIG_MODE_EXIT_SELECTED:
             DisplayInitialIcon(HS_CONFIG_MODE_EXIT);
             break;
@@ -443,15 +429,13 @@ void DisplayBlinkableIcons(const bool Hide)
     }
 }
 
-void DisplayHomeSpanStatus(const bool FirstTime)
-{
+void DisplayHomeSpanStatus(const bool FirstTime) {
     static uint8_t CurrentImageIndex = 0;
     
     // There are some statuses that should be displayed only once
     // and we do not need to update them. Do it only when the
     // FirstTime parameter is true.
-    if (FirstTime)
-    {
+    if (FirstTime) {
         // Show the initial icon for the new status.
         DisplayInitialIcon(HomeSpanStatus);
         // Reset image index.
@@ -471,12 +455,12 @@ void DisplayHomeSpanStatus(const bool FirstTime)
         HomeSpanStatus == HS_CONFIG_MODE_UNPAIR_SELECTED ||
         HomeSpanStatus == HS_CONFIG_MODE_ERASE_WIFI_SELECTED);
     // If status is static one then exit.
-    if (!Animated && !Blinkable)
+    if (!Animated && !Blinkable) {
         return;
+    }
 
     // Is is blinkable icon?
-    if (Blinkable)
-    {
+    if (Blinkable) {
         // We are here only in case the status is blinkable.
         CurrentImageIndex = CurrentImageIndex + 1;
         if (CurrentImageIndex > 1)
@@ -488,11 +472,11 @@ void DisplayHomeSpanStatus(const bool FirstTime)
 
     // We are here only if the icon is animated one.
     CurrentImageIndex = CurrentImageIndex + 1;
-    if (CurrentImageIndex > 3)
+    if (CurrentImageIndex > 3) {
         CurrentImageIndex = 0;
+    }
     
-    if (HomeSpanStatus == HS_WIFI_CONNECTING)
-    {
+    if (HomeSpanStatus == HS_WIFI_CONNECTING) {
         DrawStatus(WIFI_CONNECTING_BMP_WIDTH, WIFI_CONNECTING_BMP_HEIGHT,
             WIFI_CONNECTING_BMP[CurrentImageIndex]);
         return;
@@ -508,10 +492,8 @@ void DisplayHomeSpanStatus(const bool FirstTime)
 /**************************************************************************************/
 /*                                      UI  task                                      */
 
-void UiTask(void *pvParameter)
-{
-    while (true)
-    {
+void UiTask(void *pvParameter) {
+    while (true) {
         // Wait for event signal or for timeout. Actually we are interested only
         // in case when status changed.
         EventBits_t Events = xEventGroupWaitBits(UiTaskWakeupEvent,
@@ -522,10 +504,11 @@ void UiTask(void *pvParameter)
         // status update callback so status has just been changed and the
         // UI should be updated completely (for the first time).
         bool FirstTime = ((Events & UI_WAKEUP_EVENT) != 0);
-        if (HomeSpanStatus == HS_PAIRED)
+        if (HomeSpanStatus == HS_PAIRED) {
             DisplaySensorData(FirstTime);
-        else
+        } else {
             DisplayHomeSpanStatus(FirstTime);
+        }
     }
 
     vTaskDelete(NULL);
@@ -549,9 +532,7 @@ void UiTask(void *pvParameter)
     #define DHT_DELAY   22
 #endif
 
-bool IRAM_ATTR DhtRxDone(rmt_channel_handle_t Channel,
-    const rmt_rx_done_event_data_t* EventData, void* UserData)
-{
+bool IRAM_ATTR DhtRxDone(rmt_channel_handle_t Channel, const rmt_rx_done_event_data_t* EventData, void* UserData) {
     BaseType_t Res = pdFALSE;
     QueueHandle_t Queue = (QueueHandle_t)UserData;
     xQueueSendFromISR(Queue, EventData, &Res);
@@ -560,22 +541,19 @@ bool IRAM_ATTR DhtRxDone(rmt_channel_handle_t Channel,
 }
 
 // RMT configuration. Place it here to save task stack.
-rmt_receive_config_t RxConfig =
-{
+rmt_receive_config_t RxConfig = {
     .signal_range_min_ns = 3000,
     .signal_range_max_ns = 150000
 };
 
-rmt_rx_channel_config_t RxChannelConfig =
-{
+rmt_rx_channel_config_t RxChannelConfig = {
     .gpio_num = DHT_PIN,
     .clk_src = RMT_CLK_SRC_DEFAULT,
     .resolution_hz = 1000000,
     .mem_block_symbols = MAX_BLOCKS
 };
 
-rmt_rx_event_callbacks_t Cbs =
-{
+rmt_rx_event_callbacks_t Cbs = {
     .on_recv_done = DhtRxDone
 };
 
@@ -583,8 +561,7 @@ rmt_rx_event_callbacks_t Cbs =
 rmt_rx_done_event_data_t RxData = { 0 };
 rmt_symbol_word_t Symbols[MAX_BLOCKS] = { 0 };
 
-void ReadSensorTask(void* pvParameter)
-{
+void ReadSensorTask(void* pvParameter) {
     // Initialize RMT.
     rmt_channel_handle_t RxChannel = nullptr;
     rmt_new_rx_channel(&RxChannelConfig, &RxChannel);
@@ -603,8 +580,7 @@ void ReadSensorTask(void* pvParameter)
     // Enable RMT.
     rmt_enable(RxChannel);
     
-    while (true)
-    {
+    while (true) {
         memset(&RxData, sizeof(RxData), 0);
         memset(Symbols, sizeof(Symbols), 0);
 
@@ -612,34 +588,30 @@ void ReadSensorTask(void* pvParameter)
         vTaskDelay(pdMS_TO_TICKS(DHT_DELAY));
         gpio_set_level(DHT_PIN, 1);
         
-        if (rmt_receive(RxChannel, Symbols, sizeof(Symbols), &RxConfig) == ESP_OK)
-        {
-            if (xQueueReceive(RxQueue, &RxData, pdMS_TO_TICKS(100)) == pdPASS)
-            {
+        if (rmt_receive(RxChannel, Symbols, sizeof(Symbols), &RxConfig) == ESP_OK) {
+            if (xQueueReceive(RxQueue, &RxData, pdMS_TO_TICKS(100)) == pdPASS) {
                 size_t Len = RxData.num_symbols;
                 rmt_symbol_word_t* Cur = RxData.received_symbols;
                 uint8_t Pulse = Cur[0].duration0 + Cur[0].duration1;
-                if (Len >= 41 && Len <= 42 && Pulse >= 130 && Pulse <= 180)
-                {
+                if (Len >= 41 && Len <= 42 && Pulse >= 130 && Pulse <= 180) {
                     uint8_t Data[6];
                     bool Error = false;
-                    for (uint8_t i = 0; i < 40; i++)
-                    {
+                    for (uint8_t i = 0; i < 40; i++) {
                         Pulse = Cur[i + 1].duration0 + Cur[i + 1].duration1;
                         Error = (Pulse <= 55 || Pulse >= 145);
-                        if (Error)
+                        if (Error) {
                             break;
+                        }
                         
                         Data[i / 8] <<= 1;
-                        if (Pulse > 110)
+                        if (Pulse > 110) {
                             Data[i / 8] |= 1;
+                        }
 			        }
 			        
-                    if (!Error)
-                    {
+                    if (!Error) {
                         uint8_t Total = Data[0] + Data[1] + Data[2] + Data[3];
-                        if (Data[4] == Total)
-                        {
+                        if (Data[4] == Total) {
                             #ifdef DHT22
                                 Humidity = (Data[0] * 256 + Data[1]) * 0.1;
                                 Temperature = ((Data[2] & 0x7f) * 256 + Data[3]) * 0.1;
@@ -676,8 +648,7 @@ void ReadSensorTask(void* pvParameter)
 
 // This method called when a HomeSpan status has been changed. It will never called
 // twice for the same status.
-void HomeSpanStatusUpdate(HS_STATUS Status)
-{
+void HomeSpanStatusUpdate(HS_STATUS Status) {
     // Store current status.
     HomeSpanStatus = Status;
     
@@ -691,8 +662,7 @@ void HomeSpanStatusUpdate(HS_STATUS Status)
 /**************************************************************************************/
 /*                                  Arduino routines                                  */
 
-void setup()
-{
+void setup() {
     // Initialize UART.
     Serial.begin(115200);
     delay(500);
@@ -751,8 +721,7 @@ void setup()
     new HumiditySensor();
 }
 
-void loop()
-{
+void loop() {
     homeSpan.poll();
 }
 
