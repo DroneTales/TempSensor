@@ -189,7 +189,7 @@ bool IsEqual(const float a, const float b)
 
 // Draws the bitmap in the screen center.
 void DrawBitmap(const int16_t Width, const int16_t Height, const uint8_t Bitmap[])
-
+{
     Oled.drawBitmap((OLED_SCREEN_WIDTH - Width) / 2, (OLED_SCREEN_HEIGHT - Height) / 2,
         Bitmap, Width, Height, WHITE);
 }
