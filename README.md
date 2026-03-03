@@ -13,10 +13,10 @@
  - External 5V power supply
  
  **Required Arduino Libraries**
- - esp32 by Espressif Systems (board) 3.3.3
- - HomeSpan 2.1.6
+ - esp32 by Espressif Systems (board) 3.3.7
+ - HomeSpan 2.1.7
  - Adafruit GFX Library 1.12.4
- - Adafruit SSD1306 2.5.15
+ - Adafruit SSD1306 2.5.16
  
  **Arduino IDE Settings**
  - Board: ESP32C3 Dev BModule
