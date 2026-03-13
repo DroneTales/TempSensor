@@ -7,7 +7,7 @@
  **Required Hardware**
  - DHT11
  - OLED SSD1306 128x64 i2c
- - ESP32C4FN Super Mini
+ - ESP32C3FN4 Super Mini
  - 10K resistor
  - Push button
  - External 5V power supply
